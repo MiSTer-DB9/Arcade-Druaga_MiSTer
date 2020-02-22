@@ -67,7 +67,8 @@ module emu
 	// 1 - D-/TX
 	// 2..6 - USR2..USR6
 	// Set USER_OUT to 1 to read from USER_IN.
-	output	      USER_MODE,
+	output	USER_OSD,
+	output	USER_MODE,
 	input   [7:0] USER_IN,
 	output  [7:0] USER_OUT
 );
@@ -79,6 +80,7 @@ wire   joy_split, joy_mdsel;
 wire   [5:0] joy_in = {USER_IN[6],USER_IN[3],USER_IN[5],USER_IN[7],USER_IN[1],USER_IN[2]};
 assign USER_OUT  = |status[33:32] ? {3'b111,joy_split,3'b111,joy_mdsel} : '1;
 assign USER_MODE = |status[33:32] ;
+assign USER_OSD  = joydb9md_1[7] & joydb9md_1[5];
 
 assign LED_USER  = ioctl_download;
 assign LED_DISK  = 0;
@@ -241,11 +243,11 @@ wire [21:0] gamma_bus;
 
 
 wire [15:0] joystk1 = |status[33:32] ? {
-	joydb9md_1[8] | joydb9md_1[11] | (joydb9md_1[7] & joydb9md_1[6]),// Mode | Z | Start + A -> Coin
-	joydb9md_1[10],// _start_2	-> Y (dummy)
+	joydb9md_1[8] | (joydb9md_1[7] & joydb9md_1[4]),// Mode | Start + B -> Coin
+	joydb9md_1[11],// _start_2	-> Z (dummy)
 	joydb9md_1[7], // _start_1  -> Start
 	joydb9md_1[5], // btn_fireB -> C
-	joydb9md_1[4], // btn_fireA -> B
+	joydb9md_1[6], // btn_fireA -> A
 	joydb9md_1[3], // btn_up	-> U
 	joydb9md_1[2], // btn_down 	-> D
 	joydb9md_1[1], // btn_left 	-> L
@@ -254,11 +256,11 @@ wire [15:0] joystk1 = |status[33:32] ? {
 	: joystk1_USB;
 
 wire [15:0] joystk2 =  status[33]    ? {
-	joydb9md_2[8] | joydb9md_2[11] | (joydb9md_2[7] & joydb9md_2[6]),// Mode | Z | Start + A -> Coin
+	joydb9md_2[8] | (joydb9md_2[7] & joydb9md_2[4]),// Mode | Start + B -> Coin
 	joydb9md_2[7], // _start_2  -> Start
-	joydb9md_2[10],// _start_1 -> Y (dummy)
+	joydb9md_2[11],// _start_1 -> Z (dummy)
 	joydb9md_2[5], // btn_fireB -> C
-	joydb9md_2[4], // btn_fireA -> B
+	joydb9md_2[6], // btn_fireA -> A
 	joydb9md_2[3], // btn_up	-> U
 	joydb9md_2[2], // btn_down 	-> D
 	joydb9md_2[1], // btn_left 	-> L
@@ -302,6 +304,7 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	
 	.joystick_0(joystk1_USB),
 	.joystick_1(joystk2_USB),
+	.joy_raw(joydb9md_1[5:0]), //Menu Dirs, A:Action B:Back
 	.ps2_key(ps2_key)
 );
 
