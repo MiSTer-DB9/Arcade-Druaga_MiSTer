@@ -304,7 +304,7 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	
 	.joystick_0(joystk1_USB),
 	.joystick_1(joystk2_USB),
-	.joy_raw(joydb9md_1[5:0]), //Menu Dirs, A:Action B:Back
+	.joy_raw({joydb9md_1[4],joydb9md_1[6],joydb9md_1[3:0]}), //Menu Dirs, A:Action B:Back
 	.ps2_key(ps2_key)
 );
 
