@@ -105,6 +105,7 @@ localparam CONF_STR = {
 	"HFO2,Orientation,Vert,Horz;",
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"O7,Flip Screen,Off,On;",
+	"oUV,UserIO Joystick,Off,DB9MD,DB15 ;",	
 	"oT,UserIO Players, 1 Player,2 Players;",
 	"-;",
 	"DIP;",
