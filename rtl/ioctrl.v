@@ -9,7 +9,7 @@
 *****************************************************/
 module IOCTRL( CLK, UPDATE, RESET, ENABLE, WR, ADRS, IN, OUT,
     STKTRG12,   // Joystick controls
-    CSTART12,   // Start buttons
+    CSTART12,   // Start buttons 
     DIPSW,
     IsMOTOS,
     MODEL );
@@ -45,6 +45,7 @@ reg             bUpdate;
 reg             bIOMode;
 
 parameter [2:0] SUPERPAC=3'd5;
+parameter [2:0] GROBDA=3'd6;
 
 
 assign  OUT = { 4'b1111, outr };
@@ -80,14 +81,20 @@ always @ ( posedge CLK ) begin
     end else begin
         if ( UPDATE & (~bUpdate) ) begin
             if ( mema[4'h8] == 4'h8 || MODEL==SUPERPAC )
-                bIOMode <= 1'b1;       // Is running "Motos" ?
+                bIOMode <= 1'b1;       // Is running "Motos" ? (or GROBDA?)
 
-            if ( bIOMode ) begin
-                `include "ioctrl_1.v"
-            end
+				// Grobda specific 58XX / 56XX combination
+				if (MODEL==GROBDA) begin
+				 `include "ioctrl_2.v"
+				end
             else begin
-                `include "ioctrl_0.v"
-            end
+					if ( bIOMode ) begin
+						 `include "ioctrl_1.v"
+					end
+					else begin
+						 `include "ioctrl_0.v"
+					end
+				end
 
             pCSTART12 <= CSTART12;
             pSTKTRG12 <= STKTRG12;
